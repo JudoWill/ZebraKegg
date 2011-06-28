@@ -1,6 +1,9 @@
 from mechanize import Browser
+from collections import defaultdict
 import os, os.path
 import re
+import argparse
+
 
 
 class KeggBrowser(Browser):
@@ -27,7 +30,7 @@ class KeggBrowser(Browser):
             if colors is None:
                 gene_str_data += gene+'\n'
             else:
-                gene_str_data += '%s %s\n' % (gene, ','.join(colors))
+                gene_str_data += '%s %s\n' % (gene, colors)
         self.select_form(nr = 0)
         self['org_name'] = [org]
         self['unclassified'] = gene_str_data
@@ -80,17 +83,49 @@ class KeggBrowser(Browser):
 
 if __name__ == '__main__':
     
+    parser = argparse.ArgumentParser(description = 'Make "zebra" plots for kegg picutes.')
+    parser.add_argument('--genefile', help = 'path/to/file which contains the gene-to-group mapping.', require = True)
+    parser.add_argument('--colorfile', help = 'path/to/file which has the group-to-color mapping.', required = True)
+    parser.add_argument('--destdir', default = None, help = 'path/to/destination where you want the maps to be created.')
 
-    odir = 'keggtest/'
+    args = parser.parse_args()
+    if parser.destdir is None:
+        dest_dir = parser.colorfile.split(os.sep)[-1].split('.')[0]
+    else:
+        dest_dir = parser.destdir
 
-    genes = {'2146':('blue',), '8880':('blue',), '5436':('blue',), '22976':('blue',),
-            '1476':('blue',),'3148':('blue',),'5438':('blue',),'6772':('blue',),
-            '8317':('blue',),'10799':('blue',),'8318':('blue',),'10609':('blue',),
-            '22974':('blue',),'79902':('blue',),'1457':('blue','red',),'5423':('blue','red',),'890':('blue','red',)}
-    keggbw = KeggBrowser()
-    keggbw.init_for_kegg()
-    keggbw.search_pathways(genes)
-    keggbw.get_pathways(outpath = odir)
+    try:
+        os.mkdir(dest_dir)
+    except OSError:
+        pass
+
+    group_dict = defaultdict(set)
+    with open(args.genefile) as handle:
+        for line in handle:
+            parts = line.strip().split()
+            try:
+                int(parts[0])
+            except ValueError:
+                raise ValueError, '%s does not look like an entrez-id' % parts[0]
+            group_dict[parts[1]].add(parts[0])
+    color_dict = {}
+    with open(args.colorfile) as handle:
+        for line in handle:
+            parts = line.strip().split()
+            color_dict[parts[0]] = parts[1]
+
+    assert all(x in color_dict for x in group_dict.keys()), 'Not all colors mentioned in %s are in %s' % (parser.genefile, parser.colorfile)
+
+    for key, genes in group_dict.items():
+        ogenes = dict((x, color_dict[key]) for x in genes)
+        try:
+            os.mkdir(os.path.join(dest_dir, key))
+        except OSError:
+            pass
+        keggbw = KeggBrowser()
+        keggbw.init_for_kegg()
+        keggbw.search_pathways(ogenes)
+        keggbw.get_pathways(outpath = dest_dir)
 
 
 
