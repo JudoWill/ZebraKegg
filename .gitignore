@@ -12,6 +12,7 @@ fake-eggs
 parts
 dist
 Data/*
+*.m~
 .installed.cfg
 .mr.developer.cfg
 .hg
