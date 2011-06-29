@@ -1,9 +1,13 @@
-dirs = {'AllColoredPaths/All/',...
-    'AllColoredPaths/Colon/',...
-    'AllColoredPaths/Kidney/',...
-    'AllColoredPaths/Liver/',...
-    'AllColoredPaths/Lung/',...
-    'AllColoredPaths/Pancreas/'}; 
+function combine_keggs(base_dir)
+mkdir(base_dir, 'AllCombined');
+outpath = fullfile(base_dir, 'AllCombined');
+files = dir(base_dir);
+dirs = {};
+for i = 1:length(files)
+    if files(i).isdir
+        dirs{length(dirs)+1} = files(i).name; %#ok<AGROW>
+    end
+end
 
 image_files = cell(size(dirs));
 for i = 1:length(image_files)
@@ -12,7 +16,6 @@ end
 uni_images = unique(cat(1,image_files{:}));
 
 images = cell(size(uni_images));
-mask_cell = cell(size(uni_images));
 for i = 1:length(images)
     display(['reading: ' uni_images{i}])
     imcell = cell(size(dirs));
@@ -52,10 +55,10 @@ for i = 1:length(images)
                 %imshow(nimg)
             end
         end
-        imshow(nimg)
-        drawnow
-        pause(1)
-        imwrite(nimg,fullfile('AllCombinedPaths', [uni_images{i}]), 'png')
+        %imshow(nimg)
+        %drawnow
+        %pause(1)
+        imwrite(nimg,fullfile(outpath, [uni_images{i}]), 'png')
     end
 
 end
