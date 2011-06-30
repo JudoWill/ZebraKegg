@@ -144,7 +144,8 @@ if __name__ == '__main__':
         keggbw.search_pathways(ogenes)
         keggbw.get_pathways(outpath = tdir)
 
-    cmd = """matlab -r "combine_keggs(%s);quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
+    cmd = """matlab -r "combine_keggs('%s');quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
+    print cmd
     call(shlex.split(cmd))
 
 
