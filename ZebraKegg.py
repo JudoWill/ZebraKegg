@@ -1,9 +1,10 @@
 from mechanize import Browser
 from collections import defaultdict
+from subprocess import call
 import os, os.path
 import re
 import argparse
-
+import shlex
 
 
 class KeggBrowser(Browser):
@@ -118,8 +119,9 @@ if __name__ == '__main__':
 
     for key, genes in group_dict.items():
         ogenes = dict((x, color_dict[key]) for x in genes)
+        tdir = os.path.join(dest_dir, key)
         try:
-            os.mkdir(os.path.join(dest_dir, key))
+            os.mkdir(tdir)
         except OSError:
             pass
         keggbw = KeggBrowser()
@@ -127,6 +129,8 @@ if __name__ == '__main__':
         keggbw.search_pathways(ogenes)
         keggbw.get_pathways(outpath = dest_dir)
 
+    cmd = """matlab -r "combine_keggs(%s);quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
+    call(shlex.split(cmd))
 
 
 
