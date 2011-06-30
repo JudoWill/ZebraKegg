@@ -32,9 +32,15 @@ ColorList example:
 
   CD-Down blue,red
   CD-Up green
-  Common-Down pink,green
+  Common-Down #eeffdd
   Common-Up purple
   UC-Down yellow,blue
   UC-Up red,green
 
 The colors must be valid choices from the KEGG Color Pathway tool.
+
+Then simply run:
+
+::
+
+  python ZebraKegg.py --genefile /path/to/file --colorfile /path/to/other/file
