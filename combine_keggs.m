@@ -8,20 +8,21 @@ for i = 1:length(files)
         dirs{length(dirs)+1} = files(i).name; %#ok<AGROW>
     end
 end
-
 image_files = cell(size(dirs));
 for i = 1:length(image_files)
-    image_files{i} = arrayfun(@(x)(x.name), dir([dirs{i} '*.png']), 'uniformoutput', false);
+    %[base_dir '/' dirs{i} '/*.png']
+    image_files{i} = arrayfun(@(x)(x.name), dir([base_dir '/' dirs{i} '/*.png']), 'uniformoutput', false);
 end
 uni_images = unique(cat(1,image_files{:}));
-
+dirs(cellfun('isempty', image_files)) = [];
+dirs
 images = cell(size(uni_images));
 for i = 1:length(images)
     display(['reading: ' uni_images{i}])
     imcell = cell(size(dirs));
     for k = 1:length(dirs)
         try
-            imcell{k} = imread(fullfile(dirs{k}, uni_images{i}));
+            imcell{k} = imread(fullfile(base_dir, dirs{k}, uni_images{i}));
         catch %#ok<*CTCH>
             1+1;
             
