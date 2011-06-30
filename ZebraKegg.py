@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.destdir is None:
-        dest_dir = args.colorfile.split(os.sep)[-1].split('.')[0]
+        dest_dir = args.colorfile.split('.')[0]
     else:
         dest_dir = args.destdir
 
@@ -112,6 +112,8 @@ if __name__ == '__main__':
                 int(parts[0])
             except ValueError:
                 wrong_ids.add((parts[0], lnum))
+            except IndexError:
+                continue
             group_dict[parts[1]].add(parts[0])
     if wrong_ids:
         wstr = ''
