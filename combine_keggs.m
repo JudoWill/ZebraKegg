@@ -31,7 +31,13 @@ for i = 1:length(images)
     pres_images = imcell(~cellfun('isempty', imcell));
     tmask = false(size(pres_images{1},1), size(pres_images{1},2));
     for k = 2:length(pres_images)
-        tmask = tmask | sum(pres_images{1},3) ~= sum(pres_images{k},3);
+        try
+            tmask = tmask | sum(pres_images{1},3) ~= sum(pres_images{k},3);
+        catch
+            size(tmask)
+            size(pres_images{1})
+            size(pres_images{k})
+        end
     end
     nimg = pres_images{1};
     if any(tmask(:))
