@@ -85,9 +85,12 @@ class KeggBrowser(Browser):
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description = 'Make "zebra" plots for kegg picutes.')
-    parser.add_argument('--genefile', help = 'path/to/file which contains the gene-to-group mapping.', required = True)
-    parser.add_argument('--colorfile', help = 'path/to/file which has the group-to-color mapping.', required = True)
-    parser.add_argument('--destdir', default = None, help = 'path/to/destination where you want the maps to be created.')
+    parser.add_argument('--genefile', dest = 'genefile', required = True,
+                            help = 'path/to/file which contains the gene-to-group mapping.')
+    parser.add_argument('--colorfile', dest = 'colorfile', required = True, 
+                            help = 'path/to/file which has the group-to-color mapping.')
+    parser.add_argument('--destdir', dest = 'destdir', default = None, 
+                            help = 'path/to/destination where you want the maps to be created.')
 
     args = parser.parse_args()
     if parser.destdir is None:
