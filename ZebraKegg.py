@@ -5,6 +5,8 @@ import os, os.path
 import re
 import argparse
 import shlex
+from random import uniform
+import colorsys
 
 
 class KeggBrowser(Browser):
@@ -77,8 +79,15 @@ class KeggBrowser(Browser):
             self._download_pathway_from_link(link, outpath)
             
         
-
-
+def pick_colors(ncolors):
+    
+    for hue in range(0,360, 360/ncolors):
+        saturation = 90+uniform(0,10)
+        lightness = 50+uniform(0,10)
+        res = colorsys.hls_to_rgb(hue/256, lightness/256, saturation/256)
+        rgb = [int(x*256) for x in res]
+        hval = '#'+''.join(hex(x)[-2:] for x in rgb)
+        yield hval
 
 
 
@@ -87,7 +96,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Make "zebra" plots for kegg picutes.')
     parser.add_argument('--genefile', dest = 'genefile', required = True,
                             help = 'path/to/file which contains the gene-to-group mapping.')
-    parser.add_argument('--colorfile', dest = 'colorfile', required = True, 
+    parser.add_argument('--colorfile', dest = 'colorfile', default = None,
                             help = 'path/to/file which has the group-to-color mapping.')
     parser.add_argument('--destdir', dest = 'destdir', default = None, 
                             help = 'path/to/destination where you want the maps to be created.')
@@ -122,13 +131,18 @@ if __name__ == '__main__':
         wstr += 'do not look like entrez-ids.'
         raise ValueError, wstr
 
-
-
     color_dict = {}
-    with open(args.colorfile) as handle:
-        for line in handle:
-            parts = line.strip().split()
-            color_dict[parts[0]] = parts[1]
+    if args.colorfile:
+        with open(args.colorfile) as handle:
+            for line in handle:
+                parts = line.strip().split()
+                color_dict[parts[0]] = parts[1]
+    else:
+        with open(args.genefile + '.color', 'w') as handle:
+            for key, color in izip(group_dict.keys(), pick_colors(len(group_dict))):
+                color_dict[key] = color
+                handle.write('%s\t%s\n' % (key, color))
+            
 
     assert all(x in color_dict for x in group_dict.keys()), 'Not all colors mentioned in %s are in %s' % (parser.genefile, parser.colorfile)
 
