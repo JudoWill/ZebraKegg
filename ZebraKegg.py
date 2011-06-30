@@ -93,7 +93,7 @@ if __name__ == '__main__':
                             help = 'path/to/destination where you want the maps to be created.')
 
     args = parser.parse_args()
-    if parser.destdir is None:
+    if args.destdir is None:
         dest_dir = parser.colorfile.split(os.sep)[-1].split('.')[0]
     else:
         dest_dir = parser.destdir
