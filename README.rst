@@ -9,26 +9,28 @@ When provided with a list entrez-ids and group-names and a mapping between group
 
 GeneList example:
 ========
-28727	CD-Down
-343069	CD-Down
-374920	CD-Up
-3483	CD-Up
-374907	UC-down
-4303	Common-down
-374907	Common-down
-29924	UC-down
-84787	UC-down
-374907	CD-Down
+::
+  28727	CD-Down
+  343069	CD-Down
+  374920	CD-Up
+  3483	CD-Up
+  374907	UC-down
+  4303	Common-down
+  374907	Common-down
+  29924	UC-down
+  84787	UC-down
+  374907	CD-Down
 
 All group names must be valid path-names (no non-ascii characters or spaces). 
 
 ColorList example:
 ==========
-CD-Down blue,red
-CD-Up green
-Common-Down pink,green
-Common-Up purple
-UC-Down yellow,blue
-UC-Up red,green
+::
+  CD-Down blue,red
+  CD-Up green
+  Common-Down pink,green
+  Common-Up purple
+  UC-Down yellow,blue
+  UC-Up red,green
 
 The colors must be valid choices from the KEGG Color Pathway tool.
