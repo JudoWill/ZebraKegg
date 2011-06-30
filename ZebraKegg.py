@@ -94,9 +94,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.destdir is None:
-        dest_dir = parser.colorfile.split(os.sep)[-1].split('.')[0]
+        dest_dir = args.colorfile.split(os.sep)[-1].split('.')[0]
     else:
-        dest_dir = parser.destdir
+        dest_dir = args.destdir
 
     try:
         os.mkdir(dest_dir)
@@ -105,12 +105,12 @@ if __name__ == '__main__':
 
     group_dict = defaultdict(set)
     with open(args.genefile) as handle:
-        for line in handle:
+        for lnum, line in enumerate(handle):
             parts = line.strip().split()
             try:
                 int(parts[0])
             except ValueError:
-                raise ValueError, '%s does not look like an entrez-id' % parts[0]
+                raise ValueError, '"%s" on line %i does not look like an entrez-id' % (parts[0], lnum)
             group_dict[parts[1]].add(parts[0])
     color_dict = {}
     with open(args.colorfile) as handle:
