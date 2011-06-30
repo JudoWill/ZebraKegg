@@ -9,7 +9,9 @@ When provided with a list entrez-ids and group-names and a mapping between group
 
 GeneList example:
 ========
+
 ::
+
   28727	CD-Down
   343069	CD-Down
   374920	CD-Up
@@ -25,7 +27,9 @@ All group names must be valid path-names (no non-ascii characters or spaces).
 
 ColorList example:
 ==========
+
 ::
+
   CD-Down blue,red
   CD-Up green
   Common-Down pink,green
