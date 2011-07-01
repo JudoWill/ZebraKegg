@@ -126,6 +126,22 @@ def pick_colors(ncolors, default = None):
         yield cname, '#'+convert_to_html_hex(color)
 
 
+def get_group_kegg_images(tdir, genes, color):
+
+    for key, genes in group_dict.items():
+        ogenes = dict((x, color) for x in genes)
+
+        keggbw = KeggBrowser()
+        keggbw.init_for_kegg()
+        keggbw.search_pathways(ogenes)
+        keggbw.get_pathways(outpath = tdir)
+
+
+def join_images(dest_dir)
+    cmd = """matlab -r "combine_keggs('%s');quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
+    print cmd
+    call(shlex.split(cmd))
+
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description = 'Make "zebra" plots for kegg picutes.')
@@ -181,21 +197,17 @@ if __name__ == '__main__':
 
     assert all(x in color_dict for x in group_dict.keys()), 'Not all colors mentioned in %s are in %s' % (parser.genefile, parser.colorfile)
 
+    
     for key, genes in group_dict.items():
-        ogenes = dict((x, color_dict[key]) for x in genes)
         tdir = os.path.join(dest_dir, key)
         try:
             os.mkdir(tdir)
         except OSError:
             pass
-        keggbw = KeggBrowser()
-        keggbw.init_for_kegg()
-        keggbw.search_pathways(ogenes)
-        keggbw.get_pathways(outpath = tdir)
 
-    cmd = """matlab -r "combine_keggs('%s');quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
-    print cmd
-    call(shlex.split(cmd))
+        get_group_kegg_images(tdir, genes, color)
+
+    join_images(dest_dir)
 
 
 
