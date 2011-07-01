@@ -113,7 +113,6 @@ def pick_colors(ncolors, default = None):
     if default is None:    
         default = choice(color_choices.keys())
     picked_colors = ((default, color_choices.pop(default)),)
-    print picked_colors
     while len(picked_colors) < ncolors:
         bdist = None
         for cname, color in color_choices.iteritems():
