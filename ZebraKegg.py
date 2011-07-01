@@ -81,6 +81,16 @@ class KeggBrowser(Browser):
             
 
 def color_dist(c1, c2):
+    """Determines the 'visual-distance' between two colors.
+    The algorithm is taken from "http://www.compuphase.com/cmetric.htm".
+
+    args:
+        c1 -- A three tuple in RGB INTEGER format (0-256)
+        c2 -- A three tuple in RGB INTEGER format (0-256)        
+    Returns
+        float -- weighted distance between the two colors.
+    """
+
     
     r1, g1, b1 = c1
     r2, g2, b2 = c2
@@ -95,12 +105,27 @@ def color_dist(c1, c2):
     return dc
 
 def convert_to_html_hex(inum):
+    """Converts a three-tuple in RGB interger format (0-256) into a html-hex format."""
     
     tstr = '%2s%2s%2s' % (inum[0], inum[1], inum[2])
     return tstr.replace(' ','0')
 
         
 def pick_colors(ncolors, default = None):
+    """Yields a visually distinct group of colors.
+
+    Colors are picked from a list of "web-safe" colors that KEGG should accept.
+
+
+    args:
+        ncolors -- An integer indicating the number of colors to pick.
+    kwargs:    
+        default = None -- If provided it will use the default as the initial 
+                          color to pick. If None then it will pick a random 
+                          color
+    Returns:
+        generator -- (color-name, html-formatted hex)
+    """
 
     color_choices = {}
     with open('color_names.txt') as handle:
@@ -127,6 +152,15 @@ def pick_colors(ncolors, default = None):
 
 
 def get_group_kegg_images(tdir, genes, color):
+    """Downloads marked KEGG diagrams.
+    
+    Args:
+        tdir -- The location to download the images to.
+        genes -- A list of entrez-ids to mark.
+        color -- A kegg-formated color.
+    Returns:
+        None
+    """
 
     for key, genes in group_dict.items():
         ogenes = dict((x, color) for x in genes)
@@ -137,7 +171,9 @@ def get_group_kegg_images(tdir, genes, color):
         keggbw.get_pathways(outpath = tdir)
 
 
-def join_images(dest_dir)
+def join_images(dest_dir):
+    """Calls matlab and merges the images"""
+
     cmd = """matlab -r "combine_keggs('%s');quit;" -nodesktop -logfile %s -nosplash""" % (dest_dir, os.path.join(dest_dir, 'tmp.out'))
     print cmd
     call(shlex.split(cmd))
