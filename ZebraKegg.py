@@ -1,3 +1,4 @@
+from __future__ import division
 from mechanize import Browser
 from collections import defaultdict
 from subprocess import call
@@ -5,8 +6,8 @@ import os, os.path
 import re
 import argparse
 import shlex
-from random import uniform
-import colorsys
+from random import choice
+from math import sqrt
 
 
 class KeggBrowser(Browser):
@@ -78,17 +79,52 @@ class KeggBrowser(Browser):
         for link in links:
             self._download_pathway_from_link(link, outpath)
             
-        
-def pick_colors(ncolors):
-    
-    for hue in range(0,360, 360/ncolors):
-        saturation = 90+uniform(0,10)
-        lightness = 50+uniform(0,10)
-        res = colorsys.hls_to_rgb(hue/256, lightness/256, saturation/256)
-        rgb = [int(x*256) for x in res]
-        hval = '#'+''.join(hex(x)[-2:] for x in rgb)
-        yield hval
 
+def color_dist(c1, c2):
+    
+    r1, g1, b1 = c1
+    r2, g2, b2 = c2
+
+    rmean = (r1+r2)/2
+
+    dr = r1-r2
+    dg = g1-g2
+    db = b1-b2
+
+    dc = sqrt((2+rmean/256)*(dr**2) + 4*(dg**2) + (2+(255-rmean)/255)*(db**2))
+    return dc
+
+def convert_to_html_hex(inum):
+    
+    tstr = '%2s%2s%2s' % (inum[0], inum[1], inum[2])
+    return tstr.replace(' ','0')
+
+        
+def pick_colors(ncolors, default = None):
+
+    color_choices = {}
+    with open('color_names.txt') as handle:
+        for line in handle:
+            cname, colors = line.strip().split('\t')
+            color_choices[cname] = [int(x, base = 16) for x in colors.split()]
+
+    assert ncolors < len(color_choices), "You have more than %i different groups, You probably don't want to do this!"
+    
+    if default is None:    
+        default = choice(color_choices.keys())
+    picked_colors = ((default, color_choices.pop(default)),)
+    print picked_colors
+    while len(picked_colors) < ncolors:
+        bdist = None
+        for cname, color in color_choices.iteritems():
+            dist = min(color_dist(x, color) for _, x in picked_colors)
+            if bdist is None or dist > bdist:
+                bdist = dist
+                bcolor = cname
+        picked_colors += ((bcolor, color_choices.pop(bcolor)),)
+
+    for cname, color in picked_colors:
+        yield cname, '#'+convert_to_html_hex(color)
 
 
 if __name__ == '__main__':
@@ -139,9 +175,9 @@ if __name__ == '__main__':
                 color_dict[parts[0]] = parts[1]
     else:
         with open(args.genefile + '.color', 'w') as handle:
-            for key, color in izip(group_dict.keys(), pick_colors(len(group_dict))):
-                color_dict[key] = color
-                handle.write('%s\t%s\n' % (key, color))
+            for key, (cname, cnum) in izip(group_dict.keys(), pick_colors(len(group_dict))):
+                color_dict[key] = cnum
+                handle.write('%s\t%s\t%s\n' % (key, num, cname))
             
 
     assert all(x in color_dict for x in group_dict.keys()), 'Not all colors mentioned in %s are in %s' % (parser.genefile, parser.colorfile)
