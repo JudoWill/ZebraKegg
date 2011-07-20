@@ -88,9 +88,9 @@ if __name__ == '__main__':
     
     
     parser = argparse.ArgumentParser(description = 'Convert a list of Entrez-ids into KOs')
-    parser.add_arguement('--infile', dest = 'infile', required = True, 
+    parser.add_argument('--infile', dest = 'infile', required = True, 
                         help = 'path/to/input/file')
-    parser.add_arguement('--destfile', dest = 'destfile', required = True, 
+    parser.add_argument('--destfile', dest = 'destfile', required = True, 
                         help = 'path/to/output/file')
     
     args = parser.parse_args()
