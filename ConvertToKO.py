@@ -95,7 +95,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    entrez_ids = [line.split(None)[0] for line in open(args.infile)]
+    entrez_ids = islice([line.split(None)[0] for line in open(args.infile)],500)
     
     converting_browser = ConvertingBrowser()
     converting_browser.init_for_conversion()
