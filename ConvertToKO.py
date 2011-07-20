@@ -95,7 +95,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    entrez_ids = [line.split('')[0] for line in open(args.infile)]
+    entrez_ids = [line.split(None)[0] for line in open(args.infile)]
     
     converting_browser = ConvertingBrowser()
     converting_browser.init_for_conversion()
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     with open(args.destfile, 'w') as ohandle:
         with open(args.infile) as ihandle:
             for line in ihandle:
-                parts = line.split('',1)
+                parts = line.split(None,1)
                 try:
                     ko = mapping[parts[0]]
                     ohandle.write(ko + '\t' + parts[1] + '\n')
