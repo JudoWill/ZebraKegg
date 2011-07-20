@@ -54,7 +54,10 @@ class ConvertingBrowser(Browser):
 
         regexp = re.compile('ko:(\w*\d*)')
         for entrez, url in self.urldict.items():
-            resp = self.open(url)
+            try:
+                resp = self.open(url)
+            except:
+                continue
             html = resp.read()
             res = regexp.findall(html)
             if len(res) == 1:
@@ -95,7 +98,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    entrez_ids = islice([line.split(None)[0] for line in open(args.infile)],500)
+    entrez_ids = [line.split(None)[0] for line in open(args.infile)]
     
     converting_browser = ConvertingBrowser()
     converting_browser.init_for_conversion()
@@ -105,7 +108,7 @@ if __name__ == '__main__':
     with open(args.destfile, 'w') as ohandle:
         with open(args.infile) as ihandle:
             for line in ihandle:
-                parts = line.split(None,1)
+                parts = line.strip().split(None,1)
                 try:
                     ko = mapping[parts[0]]
                     ohandle.write(ko + '\t' + parts[1] + '\n')
