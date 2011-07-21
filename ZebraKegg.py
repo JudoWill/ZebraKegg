@@ -200,24 +200,10 @@ if __name__ == '__main__':
         pass
 
     group_dict = defaultdict(set)
-    wrong_ids = set()
     with open(args.genefile) as handle:
         for lnum, line in enumerate(handle):
             parts = line.strip().split()
-            #try:
-            #    int(parts[0])
-            #except ValueError:
-            #    if not parts[0].startswith('K'):
-            #        wrong_ids.add((parts[0], lnum))
-            #except IndexError:
-            #    continue
             group_dict[parts[1]].add(parts[0])
-    if wrong_ids:
-        wstr = ''
-        for wid, lnum in wrong_ids:
-            wstr += '"%s" on line %i\n' % (wid, lnum)
-        wstr += 'do not look like entrez-ids.'
-        raise ValueError, wstr
 
     color_dict = {}
     if args.colorfile:
