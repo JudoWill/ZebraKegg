@@ -204,12 +204,13 @@ if __name__ == '__main__':
     with open(args.genefile) as handle:
         for lnum, line in enumerate(handle):
             parts = line.strip().split()
-            try:
-                int(parts[0])
-            except ValueError:
-                wrong_ids.add((parts[0], lnum))
-            except IndexError:
-                continue
+            #try:
+            #    int(parts[0])
+            #except ValueError:
+            #    if not parts[0].startswith('K'):
+            #        wrong_ids.add((parts[0], lnum))
+            #except IndexError:
+            #    continue
             group_dict[parts[1]].add(parts[0])
     if wrong_ids:
         wstr = ''
@@ -241,7 +242,7 @@ if __name__ == '__main__':
         except OSError:
             pass
 
-        get_group_kegg_images(tdir, genes, color)
+        get_group_kegg_images(tdir, genes, color_dict[key])
 
     join_images(dest_dir)
 
