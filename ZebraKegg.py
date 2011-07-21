@@ -151,7 +151,7 @@ def pick_colors(ncolors, default = None):
         yield cname, '#'+convert_to_html_hex(color)
 
 
-def get_group_kegg_images(tdir, genes, color):
+def get_group_kegg_images(tdir, genes, color, org):
     """Downloads marked KEGG diagrams.
     
     Args:
@@ -167,7 +167,7 @@ def get_group_kegg_images(tdir, genes, color):
 
         keggbw = KeggBrowser()
         keggbw.init_for_kegg()
-        keggbw.search_pathways(ogenes)
+        keggbw.search_pathways(ogenes, org = org)
         keggbw.get_pathways(outpath = tdir)
 
 
@@ -187,6 +187,9 @@ if __name__ == '__main__':
                             help = 'path/to/file which has the group-to-color mapping.')
     parser.add_argument('--destdir', dest = 'destdir', default = None, 
                             help = 'path/to/destination where you want the maps to be created.')
+    parser.add_argument('--keggorg', dest = 'keggorg', default = 'hsa', 
+                            help = 'The organism to use for the pathway drawings.')
+
 
     args = parser.parse_args()
     if args.destdir is None:
@@ -228,7 +231,7 @@ if __name__ == '__main__':
         except OSError:
             pass
 
-        get_group_kegg_images(tdir, genes, color_dict[key])
+        get_group_kegg_images(tdir, genes, color_dict[key], args.keggargs)
 
     join_images(dest_dir)
 
