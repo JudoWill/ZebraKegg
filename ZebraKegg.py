@@ -190,7 +190,7 @@ if __name__ == '__main__':
     parser.add_argument('--keggorg', dest = 'keggorg', default = 'hsa', 
                             help = 'The organism to use for the pathway drawings.')
     parser.add_argument('--skipdone', dest = 'skipdone', default = False, action = 'store_true',
-                            help = 'The organism to use for the pathway drawings.')
+                            help = 'Skips any directories which have already been created.')
 
 
 
