@@ -189,6 +189,9 @@ if __name__ == '__main__':
                             help = 'path/to/destination where you want the maps to be created.')
     parser.add_argument('--keggorg', dest = 'keggorg', default = 'hsa', 
                             help = 'The organism to use for the pathway drawings.')
+    parser.add_argument('--skipdone', dest = 'skipdone', default = False, action = 'store_true',
+                            help = 'The organism to use for the pathway drawings.')
+
 
 
     args = parser.parse_args()
@@ -226,12 +229,14 @@ if __name__ == '__main__':
     
     for key, genes in group_dict.items():
         tdir = os.path.join(dest_dir, key)
+        if os.path.exists(tdir) and parser.skipdone:
+            continue
         try:
             os.mkdir(tdir)
         except OSError:
             pass
 
-        get_group_kegg_images(tdir, genes, color_dict[key], args.keggargs)
+        get_group_kegg_images(tdir, genes, color_dict[key], args.keggorg)
 
     join_images(dest_dir)
 
