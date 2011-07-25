@@ -40,13 +40,15 @@ class ConvertingBrowser(Browser):
         if lookup_ids:
             self.select_form(nr = 1)
             self['text'] = '\n'.join(lookup_ids)
-            self.submit()
+            resp = self.submit()
+            entrezids = re.findall('ncbi-geneid:(\d*)', resp.read())
             self.state = 'id_lookup'
-    
-            for ln in self.links():
+            
+            for ln, entrezid in zip(self.links(), entrezids):
                 newurl = self.baseurl + ln.url
-                entrezid = ln.text.split(':')[-1]
-                self.urldict[entrezid] = newurl
+                if 'dbget-bin' in newurl:
+                    #entrezid = ln.text.split(':')[-1]
+                    self.urldict[entrezid] = newurl
         print 'converted %i entrez to urls' % len(self.urldict)
 
     def _get_kos(self):
@@ -56,10 +58,14 @@ class ConvertingBrowser(Browser):
         for entrez, url in self.urldict.items():
             try:
                 resp = self.open(url)
+            except KeyboardInterrupt:
+                raise SystemExit            
             except:
+                print 'couldnt load'
                 continue
             html = resp.read()
             res = regexp.findall(html)
+
             if len(res) == 1:
                 self.mappingdict[entrez] = res[0]
                 if len(self.mappingdict) % 100 == 0:
