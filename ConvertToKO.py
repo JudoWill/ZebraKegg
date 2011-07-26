@@ -121,7 +121,7 @@ if __name__ == '__main__':
                     ohandle.write(parts[0] + '\t')
                 try:
                     ko = mapping[parts[0]]
-                    ohandle.write(ko + '\t' + parts[1] + '\n')
+                    ohandle.write(ko + '\t' + '\t'.join(parts[1:]) + '\n')
                 except KeyError:
                     if args.keepentrez:
                         ohandle.write('\n')
