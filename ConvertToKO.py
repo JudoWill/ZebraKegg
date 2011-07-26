@@ -101,6 +101,8 @@ if __name__ == '__main__':
                         help = 'path/to/input/file')
     parser.add_argument('--destfile', dest = 'destfile', required = True, 
                         help = 'path/to/output/file')
+    parser.add_argument('--keep-entrez', dest = 'keepentrez', default = False, action = 'store_true',
+                        help = 'A flag for keeping the entrez-ids.')
     
     args = parser.parse_args()
 
@@ -115,11 +117,14 @@ if __name__ == '__main__':
         with open(args.infile) as ihandle:
             for line in ihandle:
                 parts = line.strip().split(None,1)
+                if args.keepentrez:
+                    ohandle.write(parts[0] + '\t')
                 try:
                     ko = mapping[parts[0]]
                     ohandle.write(ko + '\t' + parts[1] + '\n')
                 except KeyError:
-                    pass
+                    if args.keepentrez:
+                        ohandle.write('\n')
 
 
 
